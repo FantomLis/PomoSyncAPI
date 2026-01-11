@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace PomoSyncAPI.BackEnd.Controllers;
+namespace PomoSyncAPI.Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]

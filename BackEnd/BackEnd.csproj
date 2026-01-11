@@ -6,12 +6,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <NoDefaultLaunchSettingsFile>True</NoDefaultLaunchSettingsFile>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>PomoSyncAPI.BackEnd</RootNamespace>
-        <AssemblyName>PomoSyncAPI.BackEnd</AssemblyName>
-        <PackageId>PomoSyncAPI.BackEnd</PackageId>
+        <RootNamespace>PomoSyncAPI.Backend</RootNamespace>
+        <AssemblyName>PomoSyncAPI.Backend</AssemblyName>
+        <PackageId>PomoSyncAPI.Backend</PackageId>
         <Authors>FantomLis</Authors>
         <Company>FantomLis</Company>
-        <Product>PomoSyncAPI.BackEnd</Product>
+        <Product>PomoSyncAPI.Backend</Product>
+        <Version>1.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>

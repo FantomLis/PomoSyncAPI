@@ -1,4 +1,4 @@
-﻿namespace PomoSyncAPI.BackEnd.TextTools;
+﻿namespace PomoSyncAPI.Backend.TextTools;
 
 public static class StringExtensions
 {

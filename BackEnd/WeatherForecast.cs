@@ -1,4 +1,4 @@
-namespace PomoSyncAPI.BackEnd;
+namespace PomoSyncAPI.Backend;
 
 public class WeatherForecast
 {

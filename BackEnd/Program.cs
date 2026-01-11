@@ -1,6 +1,6 @@
-using PomoSyncAPI.BackEnd.TextTools;
+using PomoSyncAPI.Backend.TextTools;
 
-namespace PomoSyncAPI.BackEnd;
+namespace PomoSyncAPI.Backend;
 
 public static class Executable
 {
