@@ -1,10 +1,29 @@
+using PomoSyncAPI.BackEnd.TextTools;
+
 namespace PomoSyncAPI.BackEnd;
 
 public static class Executable
 {
+    public const int KESTREL_HTTP_PORT = 32510;
+    public const int KESTREL_HTTPS_PORT = 32500;
+
+    public const string DEPLOY_MODE = "FANTOMLIS_POMOSYNCAPI_DEPLOY_MODE";
+    
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.WebHost.ConfigureKestrel(kestrel =>
+        {
+            kestrel.ListenAnyIP(KESTREL_HTTP_PORT);
+            if (Environment.GetEnvironmentVariable(DEPLOY_MODE).IsSame("https"))
+            {
+                kestrel.ListenAnyIP(KESTREL_HTTPS_PORT, listenOptions =>
+                {
+                    listenOptions.UseHttps();
+                });
+            }
+        });
 
         // Add services to the container.
 
