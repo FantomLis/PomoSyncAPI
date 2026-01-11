@@ -1,8 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackEnd", "BackEnd\BackEnd.csproj", "{3BFB2B89-C392-4543-AC34-68A03AA31DED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BFB2B89-C392-4543-AC34-68A03AA31DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BFB2B89-C392-4543-AC34-68A03AA31DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BFB2B89-C392-4543-AC34-68A03AA31DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BFB2B89-C392-4543-AC34-68A03AA31DED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
