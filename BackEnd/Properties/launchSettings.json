@@ -17,7 +17,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:32510;http://localhost:32500",
+      "applicationUrl": "https://localhost:32500;http://localhost:32510",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "FANTOMLIS_POMOSYNCAPI_DEPLOY_MODE": "https"

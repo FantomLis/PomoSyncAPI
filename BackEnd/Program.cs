@@ -15,7 +15,6 @@ public static class Executable
 
         builder.WebHost.ConfigureKestrel(kestrel =>
         {
-            kestrel.ListenAnyIP(KESTREL_HTTP_PORT);
             if (Environment.GetEnvironmentVariable(DEPLOY_MODE).IsSame("https"))
             {
                 kestrel.ListenAnyIP(KESTREL_HTTPS_PORT, listenOptions =>
@@ -23,6 +22,7 @@ public static class Executable
                     listenOptions.UseHttps();
                 });
             }
+            kestrel.ListenAnyIP(KESTREL_HTTP_PORT);
         });
 
         // Add services to the container.
