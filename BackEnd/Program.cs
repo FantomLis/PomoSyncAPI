@@ -1,4 +1,6 @@
 using PomoSyncAPI.Backend.TextTools;
+using Serilog;
+using Serilog.Events;
 
 namespace PomoSyncAPI.Backend;
 
@@ -11,7 +13,15 @@ public static class Executable
     
     public static void Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
+            .WriteTo.Console()
+            .CreateLogger();
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddSerilog();
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -33,6 +43,8 @@ public static class Executable
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+
+        app.UseSerilogRequestLogging();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
