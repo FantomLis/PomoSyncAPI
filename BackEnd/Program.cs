@@ -13,7 +13,7 @@ public static class Executable
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.WebHost.ConfigureKestrel(kestrel =>
+        builder.WebHost.UseKestrel(kestrel =>
         {
             if (Environment.GetEnvironmentVariable(DEPLOY_MODE).IsSame("https"))
             {
