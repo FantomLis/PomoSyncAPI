@@ -2,9 +2,8 @@
 
 namespace PomoSyncAPI.Backend.Areas.Authorization;
 
-[Area("Authorization")]
 [ApiController]
-[Route("auth")]
+[Route("/auth")]
 public class AuthorizationController : Controller
 {
     [HttpGet("token")]
