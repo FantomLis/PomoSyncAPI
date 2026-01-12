@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using PomoSyncAPI.Backend.TextTools;
 using Serilog;
 using Serilog.Events;
@@ -10,6 +11,8 @@ public static class Executable
     public const int KESTREL_HTTPS_PORT = 32500;
 
     public const string DEPLOY_MODE = "FANTOMLIS_POMOSYNCAPI_DEPLOY_MODE";
+
+    public static string API_VERSION = "v0-dev";
     
     public static void Main(string[] args)
     {
@@ -38,9 +41,17 @@ public static class Executable
         // Add services to the container.
 
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+
+        builder.Services.AddSwaggerGen(swagger =>
+        {
+            swagger.SwaggerDoc(API_VERSION, new OpenApiInfo()
+            {
+                Title = "PomoSyncAPI",
+                Description = "Simple API for syncing Pomodoro timers",
+                Version = API_VERSION
+            });
+        });
+
 
         var app = builder.Build();
 
@@ -50,7 +61,10 @@ public static class Executable
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(uiOptions =>
+            {
+                uiOptions.SwaggerEndpoint($"/swagger/{API_VERSION}/swagger.json", $"PomoSyncAPI {API_VERSION}");
+            });
         }
 
         app.UseHttpsRedirection();
