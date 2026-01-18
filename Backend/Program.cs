@@ -29,16 +29,7 @@ public static class Executable
 
         builder.Services.AddSerilog();
 
-        try
-        {
-            await AddDatabaseContext(builder);
-        }
-        catch (NpgsqlException ex)
-        {
-            Log.Error($"Failed to add main database context: {ex.Message}");
-            if (builder.Environment.IsDevelopment()) Log.Error(ex.ToString());
-            return;
-        }
+        AddDatabaseContext(builder);
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -69,6 +60,17 @@ public static class Executable
         var app = builder.Build();
 
         app.UseSerilogRequestLogging();
+        
+        try
+        {
+            await MigrateMainDatabase(app);
+        }
+        catch (NpgsqlException ex)
+        {
+            Log.Error($"Failed to add main database context: {ex.Message}");
+            if (builder.Environment.IsDevelopment()) Log.Error(ex.ToString());
+            return;
+        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -90,10 +92,18 @@ public static class Executable
         app.Run();
     }
 
-    private static async Task AddDatabaseContext(WebApplicationBuilder builder)
+    private static void AddDatabaseContext(WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<MainDatabaseContext>();
-        using (var db = new MainDatabaseContext(builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME)))
+        builder.Services.AddDbContextPool<MainDatabaseContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseNpgsql(
+                builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME));
+        });
+    }
+
+    private static async Task MigrateMainDatabase(WebApplication app)
+    {
+        using (var db = app.Services.CreateAsyncScope().ServiceProvider.GetRequiredService<MainDatabaseContext>())
         {
             bool isAvalaible = await db.Database.CanConnectAsync();
             if (!isAvalaible) throw new NpgsqlException("Cannot migrate database: Database unavailable.");
