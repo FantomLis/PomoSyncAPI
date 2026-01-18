@@ -30,6 +30,7 @@ public static class Executable
         builder.Services.AddSerilog();
 
         await ConnectDatabase(builder);
+            await AddDatabaseContext(builder);
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -81,7 +82,7 @@ public static class Executable
         app.Run();
     }
 
-    private static async Task ConnectDatabase(WebApplicationBuilder builder)
+    private static async Task AddDatabaseContext(WebApplicationBuilder builder)
     {
         using (var db = new MainDatabaseContext(builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME)))
         {
