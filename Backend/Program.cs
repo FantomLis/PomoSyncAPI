@@ -29,8 +29,16 @@ public static class Executable
 
         builder.Services.AddSerilog();
 
-        await ConnectDatabase(builder);
+        try
+        {
             await AddDatabaseContext(builder);
+        }
+        catch (NpgsqlException ex)
+        {
+            Log.Error($"Failed to add main database context: {ex.Message}");
+            if (builder.Environment.IsDevelopment()) Log.Error(ex.ToString());
+            return;
+        }
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -84,12 +92,12 @@ public static class Executable
 
     private static async Task AddDatabaseContext(WebApplicationBuilder builder)
     {
+        builder.Services.AddDbContext<MainDatabaseContext>();
         using (var db = new MainDatabaseContext(builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME)))
         {
             bool isAvalaible = await db.Database.CanConnectAsync();
-            if (!isAvalaible) throw new NpgsqlException("Database server is unavailable.");
+            if (!isAvalaible) throw new NpgsqlException("Cannot migrate database: Database unavailable.");
             await db.Database.MigrateAsync();
         }
-        builder.Services.AddDbContext<MainDatabaseContext>();
     }
 }
