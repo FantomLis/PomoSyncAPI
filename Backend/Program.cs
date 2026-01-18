@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using PomoSyncAPI.Backend.Database;
 using PomoSyncAPI.Backend.TextTools;
 using Serilog;
 using Serilog.Events;
@@ -25,6 +26,8 @@ public static class Executable
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddSerilog();
+
+        builder.Services.AddDbContext<MainDatabaseContext>();
 
         builder.WebHost.UseKestrel(kestrel =>
         {
