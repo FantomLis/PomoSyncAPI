@@ -9,7 +9,7 @@ public class User
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Token;
+    public Guid Token { get; set; }
     [Required]
-    public string PasswordHash;
+    public string PasswordHash { get; set; }
 }
