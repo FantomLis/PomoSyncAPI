@@ -15,7 +15,7 @@ public static class Executable
 
     public const string DEPLOY_MODE = "FANTOMLIS_POMOSYNCAPI_DEPLOY_MODE";
 
-    public static string API_VERSION = "v0-dev";
+    public const string API_VERSION = "v0-dev";
     
     public static async Task Main(string[] args)
     {
