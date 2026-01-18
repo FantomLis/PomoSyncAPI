@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using PomoSyncAPI.Backend.Database;
 using PomoSyncAPI.Backend.TextTools;
 using Serilog;
@@ -15,7 +17,7 @@ public static class Executable
 
     public static string API_VERSION = "v0-dev";
     
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
@@ -27,7 +29,7 @@ public static class Executable
 
         builder.Services.AddSerilog();
 
-        builder.Services.AddDbContext<MainDatabaseContext>();
+        await ConnectDatabase(builder);
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -77,5 +79,16 @@ public static class Executable
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static async Task ConnectDatabase(WebApplicationBuilder builder)
+    {
+        using (var db = new MainDatabaseContext(builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME)))
+        {
+            bool isAvalaible = await db.Database.CanConnectAsync();
+            if (!isAvalaible) throw new NpgsqlException("Database server is unavailable.");
+            await db.Database.MigrateAsync();
+        }
+        builder.Services.AddDbContext<MainDatabaseContext>();
     }
 }
