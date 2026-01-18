@@ -1,4 +1,8 @@
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Npgsql;
+using PomoSyncAPI.Backend.Database;
 using PomoSyncAPI.Backend.TextTools;
 using Serilog;
 using Serilog.Events;
@@ -12,9 +16,9 @@ public static class Executable
 
     public const string DEPLOY_MODE = "FANTOMLIS_POMOSYNCAPI_DEPLOY_MODE";
 
-    public static string API_VERSION = "v0-dev";
+    public const string API_VERSION = "v0-dev";
     
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
@@ -25,6 +29,8 @@ public static class Executable
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddSerilog();
+
+        AddDatabaseContext(builder);
 
         builder.WebHost.UseKestrel(kestrel =>
         {
@@ -50,12 +56,25 @@ public static class Executable
                 Description = "Simple API for syncing Pomodoro timers",
                 Version = API_VERSION
             });
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            swagger.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
-
+        
 
         var app = builder.Build();
 
         app.UseSerilogRequestLogging();
+        
+        try
+        {
+            await MigrateMainDatabase(app);
+        }
+        catch (NpgsqlException ex)
+        {
+            Log.Error($"Failed to add main database context: {ex.Message}");
+            if (builder.Environment.IsDevelopment()) Log.Error(ex.ToString());
+            return;
+        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -75,5 +94,24 @@ public static class Executable
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static void AddDatabaseContext(WebApplicationBuilder builder)
+    {
+        builder.Services.AddDbContextPool<MainDatabaseContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseNpgsql(
+                builder.Configuration.GetConnectionString(MainDatabaseContext.CONNECTION_STRING_NAME));
+        });
+    }
+
+    private static async Task MigrateMainDatabase(WebApplication app)
+    {
+        using (var db = app.Services.CreateAsyncScope().ServiceProvider.GetRequiredService<MainDatabaseContext>())
+        {
+            bool isAvalaible = await db.Database.CanConnectAsync();
+            if (!isAvalaible) throw new NpgsqlException("Cannot migrate database: Database unavailable.");
+            await db.Database.MigrateAsync();
+        }
     }
 }
