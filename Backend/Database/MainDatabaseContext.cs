@@ -10,6 +10,7 @@ public class MainDatabaseContext : DbContext
     
     private string _connectionString;
 
+    public MainDatabaseContext() {}
     public MainDatabaseContext(string connectionString)
     {
         _connectionString = connectionString;
