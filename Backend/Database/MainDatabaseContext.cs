@@ -5,6 +5,7 @@ namespace PomoSyncAPI.Backend.Database;
 
 public class MainDatabaseContext : DbContext
 {
+    public const string CONNECTION_STRING_NAME = "MainDb";
     public DbSet<User> UserTable { get; set; }
     
     private string _connectionString;
@@ -16,7 +17,7 @@ public class MainDatabaseContext : DbContext
 
     public MainDatabaseContext(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("MainDB")!;
+        _connectionString = configuration.GetConnectionString(CONNECTION_STRING_NAME)!;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
