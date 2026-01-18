@@ -14,6 +14,11 @@ public class MainDatabaseContext : DbContext
         _connectionString = connectionString;
     }
 
+    public MainDatabaseContext(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("MainDB")!;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql();
